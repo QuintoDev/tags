@@ -1,0 +1,10 @@
+name: Tag laboratory
+
+on:
+  push:
+    branches:
+      - laboratory
+
+jobs:
+  ValidateCache:
+    runs-on: ubuntu-latest
