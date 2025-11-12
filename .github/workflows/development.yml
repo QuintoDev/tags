@@ -6,11 +6,37 @@ on:
       - development
 
 jobs:
-  ValidateCache:
+  read_labels:
+    name: Read PR labels
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
     steps:
+      - name: Get labels from pull request
+        id: get_labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed("No pull_request found in the event payload");
+              return;
+            }
+            const labels = pr.labels.map(l => l.name);
+            core.setOutput("labels", labels.join(","));
+            console.log("PR labels:", labels);
 
-      - uses: actions/checkout@v4
-
-      - name: List
-        run: ls -l
+      - name: Get PR title
+        id: get_title
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed("No pull_request found in the event payload");
+              return;
+            }
+            const title = pr.title || "";
+            core.setOutput("title", title);
+            console.log("PR title:", title);

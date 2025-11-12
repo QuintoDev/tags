@@ -12,5 +12,6 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: List
-        run: ls -l
+      - name: Show labels
+        run: |
+          echo "Labels: ${{ steps.get_labels.outputs.labels }}"
