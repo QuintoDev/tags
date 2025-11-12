@@ -8,3 +8,10 @@ on:
 jobs:
   ValidateCache:
     runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Show labels
+        run: |
+          echo "Labels: ${{ steps.get_labels.outputs.labels }}"
