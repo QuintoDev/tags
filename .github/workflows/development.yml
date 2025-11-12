@@ -10,5 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: CheckRepository
-        uses: actions/cache@v4
+      - uses: actions/checkout@v4
+
+      - name: List
+        run: ls -l
