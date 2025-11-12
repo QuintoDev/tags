@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - laboratory
+      - development
 
 jobs:
   ValidateCache:
