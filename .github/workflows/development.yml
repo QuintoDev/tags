@@ -6,11 +6,16 @@ on:
       - development
 
 jobs:
-  ValidateCache:
+  get_labels:
     runs-on: ubuntu-latest
     steps:
-
-      - uses: actions/checkout@v4
-
-      - name: List
-        run: ls -l
+      - name: Get PR Labels
+        uses: actions/github-script@v6
+        id: get-labels
+        with:
+          script: |
+            const labels = github.event.pull_request.labels.map(label => label.name);
+            core.setOutput('pr_labels', JSON.stringify(labels));
+      - name: Use Labels
+        run: |
+          echo "PR Labels: ${{ steps.get-labels.outputs.pr_labels }}"
