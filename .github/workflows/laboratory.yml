@@ -12,6 +12,25 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Show labels
-        run: |
-          echo "Labels: ${{ steps.get_labels.outputs.labels }}"
+      - name: Show PR and branch labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const branch = process.env.GITHUB_REF.replace('refs/heads/development', '');
+            core.info(`Branch: ${branch}`);
+            // list open PRs that target this branch
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              base: branch,
+              per_page: 100
+            });
+            if (!prs.length) {
+              core.info('No open PRs targeting this branch.');
+            } else {
+              for (const pr of prs) {
+                const labelNames = pr.labels.map(l => l.name).join(', ') || '(no labels)';
+                core.info(`PR #${pr.number} "${pr.title}" — labels: ${labelNames}`);
+              }
+            }
