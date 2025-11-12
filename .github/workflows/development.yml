@@ -6,16 +6,27 @@ on:
       - development
 
 jobs:
-  get_labels:
+  read_labels:
+    name: Read PR labels
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
     steps:
-      - name: Get PR Labels
+      - name: Get labels from pull request
+        id: get_labels
         uses: actions/github-script@v6
-        id: get-labels
         with:
           script: |
-            const labels = github.event.pull_request.labels.map(label => label.name);
-            core.setOutput('pr_labels', JSON.stringify(labels));
-      - name: Use Labels
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed("No pull_request found in the event payload");
+              return;
+            }
+            const labels = pr.labels.map(l => l.name);
+            core.setOutput("labels", labels.join(","));
+            console.log("PR labels:", labels);
+
+      - name: Show labels
         run: |
-          echo "PR Labels: ${{ steps.get-labels.outputs.pr_labels }}"
+          echo "Labels: ${{ steps.get_labels.outputs.labels }}"
